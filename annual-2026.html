@@ -101,8 +101,8 @@ main{inset:68px 0 48px}.title{font-size:38px;margin-bottom:13px}.kicker{font-siz
 </section>
 <div class="under">
 <div class="vote-row">
-<button type="button" class="vote" id="vote" disabled>○ &nbsp; Vote</button>
-<button type="button" class="undo" id="undo" disabled>↶ Undo</button>
+<button type="button" class="vote" id="vote">○ &nbsp; Vote</button>
+<button type="button" class="undo" id="undo">↶ Undo</button>
 </div>
 <div class="hint">Click the photo to view it larger · You can undo a vote if you change your mind</div>
 <button type="button" class="info" id="info">ⓘ 5 votes · max 2 per photo · anonymous</button>
@@ -121,6 +121,7 @@ const N=13,IMAGE_PATH="";
 const stage=document.getElementById("stage"),viewer=document.getElementById("viewer"),prev=document.getElementById("prev"),next=document.getElementById("next"),counter=document.getElementById("counter"),vote=document.getElementById("vote"),undo=document.getElementById("undo"),info=document.getElementById("info"),notice=document.getElementById("notice"),modal=document.getElementById("modal"),modalImg=document.getElementById("modalImg"),bgImg=document.getElementById("bgImg");
 let current=0,downX=0,downY=0,moved=false;
 
+const VOTE_KEY="willake-annual-picture-v1";
 const MAX_TOTAL_VOTES=5;
 const MAX_PER_PHOTO=2;
 const API = "https://willake-vote-api.kuipengxizha.workers.dev";
@@ -136,37 +137,32 @@ function getVoterId(){
 }
 const voterId = getVoterId();
 
-// 本地状态数组，只用来渲染UI；**永远以接口返回为准，不手动修改此数组**
+// 初始全部置0，不再读取本地旧投票
 let voteState={};
-let remoteUserTotal=0;
 for(let i=0;i<N;i++){
     voteState[i]=0;
 }
 
-// 【关键】从后端拉取真实投票状态，覆盖本地
+// 从远程Worker/D1拉取该用户的投票
 async function loadRemoteVotes(){
     try{
         const res = await fetch(
-            API + "/my‑votes",
+            API + "/my-votes",
             {
                 method:"POST",
                 headers:{
-                    "Content‑Type":"application/json"
+                    "Content-Type":"application/json"
                 },
-                body:JSON.stringify({voter_id:voterId})
+                body:JSON.stringify({
+                    voter_id:voterId
+                })
             }
         );
         const data = await res.json();
         if(data.success){
-            // 重置全部为0
-            for(let i=0;i<N;i++) voteState[i]=0;
-            // 填入后端返回每一张图片票数
             data.votes.forEach(v=>{
-                const idx = v.photo_id‑1;
-                voteState[idx]=Number(v.count);
+                voteState[v.photo_id-1]=v.count;
             });
-            // 使用后端数据库给出来的真实总票数
-            remoteUserTotal = Number(data.userTotal||0);
             render();
         }
     }catch(e){
@@ -174,153 +170,111 @@ async function loadRemoteVotes(){
     }
 }
 
-function imagePath(i){return IMAGE_PATH+"photo‑"+String(i+1).padStart(2,"0")+".webp"}
+function imagePath(i){return IMAGE_PATH+"photo-"+String(i+1).padStart(2,"0")+".webp"}
+function loadVotes(){try{const p=JSON.parse(localStorage.getItem(VOTE_KEY)||"{}"),c={};for(let i=0;i<N;i++){const v=Number(p[i]||0);c[i]=Math.max(0,Math.min(MAX_PER_PHOTO,Number.isFinite(v)?Math.floor(v):0))}return c}catch(e){const c={};for(let i=0;i<N;i++)c[i]=0;return c}}
+function saveVotes(){try{localStorage.setItem(VOTE_KEY,JSON.stringify(voteState))}catch(e){}}
+function totalVotes(){return Object.values(voteState).reduce((a,b)=>a+b,0)}
 function currentVotes(){return voteState[current]||0}
-
 const cards=[];
-for(let i=0;i<N;i++){
-    const c=document.createElement("div");
-    c.className="card side";
-    c.dataset.index=i;
-    c.innerHTML=`<img src="${imagePath(i)}" alt="Annual Picture ${i+1}"><div class="veil"></div>`;
-    stage.appendChild(c);
-    cards.push(c);
-}
-
-function handleCardClick(e){
-    if(moved) return;
-    const i=Number(e.currentTarget.dataset.index);
-    if(i===current){
-        modalImg.src=imagePath(current);
-        modal.classList.add("open");
-    }else{
-        current=i;
-        render();
-    }
-}
+for(let i=0;i<N;i++){const c=document.createElement("div");c.className="card side";c.dataset.index=i;c.innerHTML=`<img src="${imagePath(i)}" alt="Annual Picture ${i+1}"><div class="veil"></div>`;stage.appendChild(c);cards.push(c)}
+function handleCardClick(e){if(moved)return;const i=Number(e.currentTarget.dataset.index);if(i===current){modalImg.src=imagePath(current);modal.classList.add("open")}else{current=i;render()}}
 cards.forEach(c=>c.addEventListener("click",handleCardClick));
-
 function render(){
-cards.forEach((c,i)=>{
-    let d=i‑current;
-    if(d>N/2) d‑=N;
-    if(d<‑N/2) d+=N;
-    c.className="card";
-    c.dataset.index=i;
-    c.removeAttribute("data‑side");
-    if(d===0){
-        c.classList.add("current");
-        c.innerHTML=`<img src="${imagePath(i)}" alt="Annual Picture ${i+1}" draggable="false">`;
-    }else{
-        c.classList.add("side");
-        c.innerHTML=`<img src="${imagePath(i)}" alt="Preview ${i+1}" draggable="false"><div class="veil"></div>`;
-        if(Math.abs(d)<=3) c.dataset.side=d;
-        else c.classList.add("hidden");
-    }
-})
-
-counter.textContent=String(current+1).padStart(2,"0")+" / "+String(N).padStart(2,"0");
-bgImg.src=imagePath(current);
-
-const mine = currentVotes();
-const remaining = MAX_TOTAL_VOTES‑remoteUserTotal;
-
-if(mine>=MAX_PER_PHOTO){
-    vote.textContent=`✓  ${mine} / ${MAX_PER_PHOTO}`;
-}else if(remaining<=0){
-    vote.textContent=`✓  All 5 votes used`;
-}else{
-    vote.textContent=`○  Vote ${mine} / ${MAX_PER_PHOTO} · ${remaining} left`;
+cards.forEach((c,i)=>{let d=i-current;if(d>N/2)d-=N;if(d<-N/2)d+=N;c.className="card";c.dataset.index=i;c.removeAttribute("data-side");if(d===0){c.classList.add("current");c.innerHTML=`<img src="${imagePath(i)}" alt="Annual Picture ${i+1}" draggable="false">`}else{c.classList.add("side");c.innerHTML=`<img src="${imagePath(i)}" alt="Preview ${i+1}" draggable="false"><div class="veil"></div>`;if(Math.abs(d)<=3)c.dataset.side=d;else c.classList.add("hidden")}})
+counter.textContent=String(current+1).padStart(2,"0")+" / "+String(N).padStart(2,"0");bgImg.src=imagePath(current);
+const used=totalVotes(),mine=currentVotes(),remaining=MAX_TOTAL_VOTES-used;
+if(mine>=MAX_PER_PHOTO)vote.textContent=`✓  ${mine} / ${MAX_PER_PHOTO}`;else if(remaining<=0)vote.textContent=`✓  All 5 votes used`;else vote.textContent=`○  Vote ${mine} / ${MAX_PER_PHOTO} · ${remaining} left`;
+vote.disabled=mine>=MAX_PER_PHOTO||remaining<=0;undo.disabled=mine<=0;info.textContent=`ⓘ ${used} / ${MAX_TOTAL_VOTES} votes · max ${MAX_PER_PHOTO} per photo · anonymous`;
 }
-
-vote.disabled = mine>=MAX_PER_PHOTO || remaining<=0;
-undo.disabled = mine<=0;
-info.textContent=`ⓘ ${remoteUserTotal} / ${MAX_TOTAL_VOTES} votes · max ${MAX_PER_PHOTO} per photo · anonymous`;
-}
-
-function move(s){
-    current=(current+s+N)%N;
-    render();
-}
-
-prev.addEventListener("click",e=>{e.stopPropagation();move(‑1)});
-next.addEventListener("click",e=>{e.stopPropagation();move(1)});
+function move(s){current=(current+s+N)%N;render()}
+prev.addEventListener("click",e=>{e.stopPropagation();move(-1)});next.addEventListener("click",e=>{e.stopPropagation();move(1)});
 
 vote.addEventListener("click", async ()=>{
-    vote.disabled=true;
-    try{
-        const res = await fetch(API + "/vote", {
-            method:"POST",
-            headers:{"Content‑Type":"application/json"},
-            body:JSON.stringify({voter_id:voterId,photo_id: current + 1})
-        });
-        const data = await res.json();
-        if(data.success){
-            show("Vote recorded.");
-        }else{
-            show(data.error || "Vote failed.");
-        }
-        // ✅投票完成，**不要手动改voteState！重新拉后端真实状态覆盖前端**
-        await loadRemoteVotes();
-    }catch(err){
-        console.error(err);
-        show("Network error.");
-        render();
-    }
-});
 
-undo.addEventListener("click", async ()=>{
-    undo.disabled=true;
-    try{
-        const res = await fetch(API + "/undo", {
-            method:"POST",
-            headers:{"Content‑Type":"application/json"},
-            body:JSON.stringify({voter_id:voterId,photo_id: current +1})
-        });
-        const data = await res.json();
-        if(data.success){
-            show("Vote removed.");
-        }
-        // ✅撤销完成，重新从后端拉取真实状态
-        await loadRemoteVotes();
-    }catch(err){
-        console.error(err);
-        show("Network error.");
-        render();
-    }
-});
 
-info.addEventListener("click",()=>show("You have 5 votes total. A single photo can receive up to 2. Your choices are saved on this browser."));
-function show(t){
-    notice.textContent=t;
-    notice.classList.add("show");
-    clearTimeout(window.noticeTimer);
-    window.noticeTimer=setTimeout(()=>notice.classList.remove("show"),2800);
+vote.disabled=true;
+
+
+try{
+
+
+const res = await fetch(
+API + "/vote",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+
+voter_id:voterId,
+
+photo_id:current+1
+
+})
+
+}
+);
+
+
+
+const data = await res.json();
+
+
+console.log(data);
+
+
+
+if(data.success){
+
+
+voteState[current]++;
+
+show("Vote recorded.");
+
+
+}else{
+
+
+show(data.error || "Vote failed.");
+
+
 }
 
-document.getElementById("close").addEventListener("click",()=>modal.classList.remove("open"));
-modal.addEventListener("click",e=>{if(e.target===modal) modal.classList.remove("open")});
-document.addEventListener("keydown",e=>{
-    if(e.key==="ArrowLeft") move(‑1);
-    if(e.key==="ArrowRight") move(1);
-    if(e.key==="Escape") modal.classList.remove("open");
-});
 
-viewer.addEventListener("pointerdown",e=>{downX=e.clientX;downY=e.clientY;moved=false});
-viewer.addEventListener("pointermove",e=>{if(Math.abs(e.clientX‑downX)>8||Math.abs(e.clientY‑downY)>8) moved=true});
-viewer.addEventListener("pointerup",e=>{
-    const dx=e.clientX‑downX,dy=e.clientY‑downY;
-    if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)) move(dx<0?1:‑1);
-    setTimeout(()=>moved=false,40);
-});
-viewer.addEventListener("wheel",e=>{
-    e.preventDefault();
-    const p=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
-    if(Math.abs(p)>=8) move(p>0?1:‑1);
-},{passive:false});
 
 render();
-// 页面打开，先去后端拿该用户真实投票数据，才放开按钮
+
+
+
+}catch(err){
+
+
+console.error(err);
+
+
+show("Network error.");
+
+
+render();
+
+
+}
+
+
+});
+
+info.addEventListener("click",()=>show("You have 5 votes total. A single photo can receive up to 2. Your choices are saved on this browser. You can undo votes at any time."));
+function show(t){notice.textContent=t;notice.classList.add("show");clearTimeout(window.noticeTimer);window.noticeTimer=setTimeout(()=>notice.classList.remove("show"),2800)}
+document.getElementById("close").addEventListener("click",()=>modal.classList.remove("open"));
+modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open")});
+document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")move(-1);if(e.key==="ArrowRight")move(1);if(e.key==="Escape")modal.classList.remove("open")});
+viewer.addEventListener("pointerdown",e=>{downX=e.clientX;downY=e.clientY;moved=false});
+viewer.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-downX)>8||Math.abs(e.clientY-downY)>8)moved=true});
+viewer.addEventListener("pointerup",e=>{const dx=e.clientX-downX,dy=e.clientY-downY;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy))move(dx<0?1:-1);setTimeout(()=>moved=false,40)});
+viewer.addEventListener("wheel",e=>{e.preventDefault();const p=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(Math.abs(p)>=8)move(p>0?1:-1)},{passive:false});
+
+render();
 loadRemoteVotes();
 </script>
 </body>
