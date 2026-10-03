@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Annual Picture — Willake</title>
+<style>
+:root{--fg:#f7f6f1;--muted:rgba(247,246,241,.62)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b0d0b;color:var(--fg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+button,a{font:inherit;color:inherit}a{text-decoration:none}
+.bg{position:fixed;inset:-7%;z-index:0;overflow:hidden;background:#0d100e}
+.bg img{width:100%;height:100%;object-fit:cover;filter:blur(42px) brightness(.42) saturate(.72);transform:scale(1.13)}
+.bg:after{content:"";position:absolute;inset:0;background:rgba(7,9,7,.36)}
+header{position:fixed;z-index:50;left:0;right:0;top:0;height:82px;display:flex;align-items:center;justify-content:center;padding:0 34px;pointer-events:none}
+.nav{position:relative;display:flex;gap:28px;align-items:center;padding:9px 16px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(255,255,255,.055);backdrop-filter:blur(24px) saturate(145%);-webkit-backdrop-filter:blur(24px) saturate(145%);box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 12px 38px rgba(0,0,0,.16);overflow:hidden;pointer-events:auto;opacity:0;transform:translateY(-10px);animation:navIn .9s cubic-bezier(.18,.8,.2,1) .15s forwards}
+.nav:before{content:"";position:absolute;top:-80%;left:-35%;width:28%;height:260%;background:rgba(255,255,255,.15);filter:blur(18px);transform:rotate(20deg);transition:left .7s cubic-bezier(.18,.8,.2,1);pointer-events:none}
+.nav:hover:before{left:110%}
+.nav a{position:relative;z-index:1;font-size:11px;opacity:.70;letter-spacing:.02em;padding:3px 1px;transition:opacity .25s,transform .25s}
+.nav a:hover{opacity:1;transform:translateY(-1px)}
+@keyframes navIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+main{position:fixed;z-index:2;inset:82px 0 48px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.kicker{font-size:9px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.title{margin:0 0 20px;font-size:clamp(38px,5vw,65px);font-weight:300;letter-spacing:-.055em;line-height:1;white-space:nowrap}
+.viewer{position:relative;width:min(96vw,1260px);height:min(60vh,600px);display:flex;align-items:center;justify-content:center;touch-action:pan-y;user-select:none}
+.stage{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.card{position:absolute;left:50%;top:50%;overflow:visible;cursor:pointer;border:0;outline:0;box-shadow:none;background:transparent;transition:transform .58s cubic-bezier(.22,.72,.2,1),opacity .42s,filter .42s;will-change:transform,opacity;transform-origin:center}
+.card.side{width:220px;height:220px;border-radius:13px;overflow:hidden;box-shadow:0 18px 48px rgba(0,0,0,.28)}
+.card.side img{width:100%;height:100%;object-fit:cover;display:block}
+.card.current{width:min(70vw,900px);height:min(56vh,620px);border-radius:0;z-index:20;transform:translate(-50%,-50%);opacity:1;background:transparent;display:flex;align-items:center;justify-content:center;box-shadow:none;overflow:visible}
+.card.current img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;border:0;outline:0;box-shadow:0 22px 65px rgba(0,0,0,.30);border-radius:0}
+.card .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 60%,rgba(0,0,0,.12))}
+.card[data-side="-3"]{transform:translate(calc(-50% - 505px),-50%) scale(.70);opacity:.16;z-index:2}
+.card[data-side="-2"]{transform:translate(calc(-50% - 390px),-50%) scale(.82);opacity:.30;z-index:4}
+.card[data-side="-1"]{transform:translate(calc(-50% - 270px),-50%) scale(.94);opacity:.56;z-index:8}
+.card[data-side="1"]{transform:translate(calc(-50% + 270px),-50%) scale(.94);opacity:.56;z-index:8}
+.card[data-side="2"]{transform:translate(calc(-50% + 390px),-50%) scale(.82);opacity:.30;z-index:4}
+.card[data-side="3"]{transform:translate(calc(-50% + 505px),-50%) scale(.70);opacity:.16;z-index:2}
+.card.hidden{opacity:0;pointer-events:none}
+.card.current:hover img{box-shadow:0 26px 78px rgba(0,0,0,.38)}
+.arrow{position:absolute;z-index:40;top:50%;width:54px;height:54px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.055));backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.34),0 12px 35px rgba(0,0,0,.18);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:300;line-height:1;transition:transform .22s cubic-bezier(.2,.8,.2,1),background .22s,box-shadow .22s,border-color .22s;overflow:hidden}
+.arrow:before{content:"";position:absolute;inset:-45%;background:radial-gradient(circle,rgba(255,255,255,.28),transparent 55%);opacity:.55;filter:blur(7px);transition:transform .35s,opacity .25s}
+.arrow:hover{background:linear-gradient(145deg,rgba(255,255,255,.29),rgba(255,255,255,.09));border-color:rgba(255,255,255,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 15px 42px rgba(0,0,0,.24);transform:translateY(-50%) scale(1.08)}
+.arrow:hover:before{transform:scale(1.25);opacity:.8}
+.arrow:active{transform:translateY(-50%) scale(.90);background:rgba(255,255,255,.34)}
+.arrow.left{left:18px;transform:translateY(-50%)}.arrow.right{right:18px;transform:translateY(-50%)}
+.under{margin-top:1px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:45}
+.vote-row{display:flex;align-items:center;gap:8px}
+.undo{border:1px solid rgba(255,255,255,.20);border-radius:999px;padding:11px 15px;background:rgba(255,255,255,.07);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);cursor:pointer;font-size:10px;opacity:.82;transition:.2s}
+.undo:hover{opacity:1;background:rgba(255,255,255,.12);transform:translateY(-1px)}.undo:disabled{opacity:.25;cursor:not-allowed;transform:none}
+.hint{font-size:8px;color:rgba(247,246,241,.52);letter-spacing:.06em}
+.vote{border:1px solid rgba(255,255,255,.32);border-radius:999px;padding:13px 30px;min-width:148px;background:rgba(255,255,255,.10);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 12px 38px rgba(0,0,0,.24);cursor:pointer;font-size:11px;letter-spacing:.12em;text-transform:uppercase;transition:transform .2s,background .2s;position:relative;overflow:hidden}
+.vote:before{content:"";position:absolute;left:-50%;top:-100%;width:45%;height:300%;background:rgba(255,255,255,.18);filter:blur(14px);transform:rotate(22deg);transition:.55s}
+.vote:hover:before{left:100%}.vote:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}.vote:active{transform:scale(.94);background:rgba(255,255,255,.30);border-color:rgba(255,255,255,.62)}.vote:disabled{opacity:.42;cursor:not-allowed;transform:none}.vote:disabled:before{display:none}
+.info{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.055);color:rgba(247,246,241,.72);font-size:9px;cursor:pointer;padding:7px 12px;border-radius:999px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);transition:.2s}.info:hover{background:rgba(255,255,255,.12);color:#fff}
+.counter{position:fixed;z-index:40;left:34px;bottom:22px;font-size:10px;letter-spacing:.2em;color:var(--muted)}
+.persist{position:fixed;z-index:40;left:50%;bottom:22px;transform:translateX(-50%);font-size:8px;letter-spacing:.18em;color:rgba(247,246,241,.42)}
+.credit{position:fixed;z-index:40;right:34px;bottom:22px;font-size:10px;color:var(--muted)}
+.notice{position:fixed;z-index:100;left:50%;bottom:22px;transform:translate(-50%,18px);opacity:0;pointer-events:none;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(22px);border-radius:999px;padding:10px 17px;font-size:10px;white-space:nowrap;transition:.28s}.notice.show{opacity:1;transform:translate(-50%,0)}
+.modal{position:fixed;z-index:200;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,4,3,.48);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);padding:24px}.modal.open{display:flex}.modal img{max-width:94vw;max-height:91vh;width:auto;height:auto;object-fit:contain;border-radius:4px;box-shadow:0 30px 100px rgba(0,0,0,.68);animation:zoom .4s cubic-bezier(.18,.8,.2,1)}
+.close{position:fixed;right:27px;top:23px;width:43px;height:43px;border-radius:50%;border:1px solid rgba(255,255,255,.23);background:rgba(255,255,255,.09);backdrop-filter:blur(20px);cursor:pointer;font-size:20px}
+@keyframes zoom{from{transform:scale(.84);opacity:.45}to{transform:scale(1);opacity:1}}
+@media(max-width:800px){
+header{height:68px;padding:0 12px}.nav{gap:10px;padding:7px 11px;max-width:calc(100vw - 18px);flex-wrap:nowrap;white-space:nowrap}.nav a{font-size:9px;flex:0 0 auto;white-space:nowrap}
+main{inset:68px 0 48px}.title{font-size:38px;margin-bottom:13px}.kicker{font-size:8px}.viewer{width:100vw;height:57vh}
+.card.side{width:150px;height:150px}.card.current{width:88vw;height:48vh}
+.card[data-side="-3"]{transform:translate(calc(-50% - 300px),-50%) scale(.66)}.card[data-side="-2"]{transform:translate(calc(-50% - 225px),-50%) scale(.78)}.card[data-side="-1"]{transform:translate(calc(-50% - 155px),-50%) scale(.9)}.card[data-side="1"]{transform:translate(calc(-50% + 155px),-50%) scale(.9)}.card[data-side="2"]{transform:translate(calc(-50% + 225px),-50%) scale(.78)}.card[data-side="3"]{transform:translate(calc(-50% + 300px),-50%) scale(.66)}
+.arrow{width:46px;height:46px;font-size:21px}.arrow.left{left:10px}.arrow.right{right:10px}.counter{left:17px;bottom:15px}.persist{bottom:15px;font-size:7px}.credit{right:17px;bottom:15px}.vote-row{gap:6px}.undo{padding:10px 12px}.hint{font-size:7px}
+}
+</style>
+</head>
+<body>
+<div class="bg"><img id="bgImg" src="photo-01.jpg" alt=""></div>
+<header>
+<nav class="nav">
+<a href="index.html">Home</a>
+<a href="annual-archive.html">Annual Archive</a>
+<a href="others.html">Others</a>
+</nav>
+</header>
+<main>
+<div class="kicker">2025—2026 · Annual Selection</div>
+<h1 class="title">Annual Picture</h1>
+<section class="viewer" id="viewer">
+<button type="button" class="arrow left" id="prev">‹</button>
+<div class="stage" id="stage"></div>
+<button type="button" class="arrow right" id="next">›</button>
+</section>
+<div class="under">
+<div class="vote-row">
+<button type="button" class="vote" id="vote">○ &nbsp; Vote</button>
+<button type="button" class="undo" id="undo">↶ Undo</button>
+</div>
+<div class="hint">Click the photo to view it larger · You can undo a vote if you change your mind</div>
+<button type="button" class="info" id="info">ⓘ 5 votes · max 2 per photo · anonymous</button>
+</div>
+</main>
+<div class="counter" id="counter">01 / 13</div>
+<div class="persist" id="persist">YOUR VOTES ARE SAVED</div>
+<div class="credit">WILLAKE · 2025—2026</div>
+<div class="notice" id="notice"></div>
+<div class="modal" id="modal">
+<button type="button" class="close" id="close">×</button>
+<img id="modalImg" src="photo-01.jpg" alt="">
+</div>
+<script>
+const N=13,IMAGE_PATH="images-annual-2026/";
+const stage=document.getElementById("stage"),viewer=document.getElementById("viewer"),prev=document.getElementById("prev"),next=document.getElementById("next"),counter=document.getElementById("counter"),vote=document.getElementById("vote"),undo=document.getElementById("undo"),info=document.getElementById("info"),notice=document.getElementById("notice"),modal=document.getElementById("modal"),modalImg=document.getElementById("modalImg"),bgImg=document.getElementById("bgImg");
+let current=0,downX=0,downY=0,moved=false;
+const VOTE_KEY="willake-annual-picture-votes-v1",MAX_TOTAL_VOTES=5,MAX_PER_PHOTO=2;
+let voteState=loadVotes();
+function imagePath(i){return IMAGE_PATH+"photo-"+String(i+1).padStart(2,"0")+".jpg"}
+function loadVotes(){try{const p=JSON.parse(localStorage.getItem(VOTE_KEY)||"{}"),c={};for(let i=0;i<N;i++){const v=Number(p[i]||0);c[i]=Math.max(0,Math.min(MAX_PER_PHOTO,Number.isFinite(v)?Math.floor(v):0))}return c}catch(e){const c={};for(let i=0;i<N;i++)c[i]=0;return c}}
+function saveVotes(){try{localStorage.setItem(VOTE_KEY,JSON.stringify(voteState))}catch(e){}}
+function totalVotes(){return Object.values(voteState).reduce((a,b)=>a+b,0)}
+function currentVotes(){return voteState[current]||0}
+const cards=[];
+for(let i=0;i<N;i++){const c=document.createElement("div");c.className="card side";c.dataset.index=i;c.innerHTML=`<img src="${imagePath(i)}" alt="Annual Picture ${i+1}"><div class="veil"></div>`;stage.appendChild(c);cards.push(c)}
+function handleCardClick(e){if(moved)return;const i=Number(e.currentTarget.dataset.index);if(i===current){modalImg.src=imagePath(current);modal.classList.add("open")}else{current=i;render()}}
+cards.forEach(c=>c.addEventListener("click",handleCardClick));
+function render(){
+cards.forEach((c,i)=>{let d=i-current;if(d>N/2)d-=N;if(d<-N/2)d+=N;c.className="card";c.dataset.index=i;c.removeAttribute("data-side");if(d===0){c.classList.add("current");c.innerHTML=`<img src="${imagePath(i)}" alt="Annual Picture ${i+1}" draggable="false">`}else{c.classList.add("side");c.innerHTML=`<img src="${imagePath(i)}" alt="Preview ${i+1}" draggable="false"><div class="veil"></div>`;if(Math.abs(d)<=3)c.dataset.side=d;else c.classList.add("hidden")}})
+counter.textContent=String(current+1).padStart(2,"0")+" / "+String(N).padStart(2,"0");bgImg.src=imagePath(current);
+const used=totalVotes(),mine=currentVotes(),remaining=MAX_TOTAL_VOTES-used;
+if(mine>=MAX_PER_PHOTO)vote.textContent=`✓  ${mine} / ${MAX_PER_PHOTO}`;else if(remaining<=0)vote.textContent=`✓  All 5 votes used`;else vote.textContent=`○  Vote ${mine} / ${MAX_PER_PHOTO} · ${remaining} left`;
+vote.disabled=mine>=MAX_PER_PHOTO||remaining<=0;undo.disabled=mine<=0;info.textContent=`ⓘ ${used} / ${MAX_TOTAL_VOTES} votes · max ${MAX_PER_PHOTO} per photo · anonymous`;
+}
+function move(s){current=(current+s+N)%N;render()}
+prev.addEventListener("click",e=>{e.stopPropagation();move(-1)});next.addEventListener("click",e=>{e.stopPropagation();move(1)});
+vote.addEventListener("click",()=>{const u=totalVotes(),m=currentVotes();if(u>=MAX_TOTAL_VOTES){render();show("You have used all 5 votes.");return}if(m>=MAX_PER_PHOTO){render();show("This photo already has 2 of your votes.");return}voteState[current]=m+1;saveVotes();render();const a=totalVotes();show(a>=MAX_TOTAL_VOTES?"Your 5 votes are complete.":`Vote recorded · ${MAX_TOTAL_VOTES-a} vote${MAX_TOTAL_VOTES-a===1?"":"s"} remaining.`)});
+undo.addEventListener("click",()=>{const m=currentVotes();if(m<=0){show("There is no vote to undo for this photo.");return}voteState[current]=m-1;saveVotes();render();const r=MAX_TOTAL_VOTES-totalVotes();show(`Vote removed · ${r} vote${r===1?"":"s"} remaining.`)});
+info.addEventListener("click",()=>show("You have 5 votes total. A single photo can receive up to 2. Your choices are saved on this browser. You can undo votes at any time."));
+function show(t){notice.textContent=t;notice.classList.add("show");clearTimeout(window.noticeTimer);window.noticeTimer=setTimeout(()=>notice.classList.remove("show"),2800)}
+document.getElementById("close").addEventListener("click",()=>modal.classList.remove("open"));
+modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open")});
+document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")move(-1);if(e.key==="ArrowRight")move(1);if(e.key==="Escape")modal.classList.remove("open")});
+viewer.addEventListener("pointerdown",e=>{downX=e.clientX;downY=e.clientY;moved=false});
+viewer.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-downX)>8||Math.abs(e.clientY-downY)>8)moved=true});
+viewer.addEventListener("pointerup",e=>{const dx=e.clientX-downX,dy=e.clientY-downY;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy))move(dx<0?1:-1);setTimeout(()=>moved=false,40)});
+viewer.addEventListener("wheel",e=>{e.preventDefault();const p=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(Math.abs(p)>=8)move(p>0?1:-1)},{passive:false});
+render();
+</script>
+</body>
+</html>
