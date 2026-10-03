@@ -189,40 +189,80 @@ vote.disabled=mine>=MAX_PER_PHOTO||remaining<=0;undo.disabled=mine<=0;info.textC
 function move(s){current=(current+s+N)%N;render()}
 prev.addEventListener("click",e=>{e.stopPropagation();move(-1)});next.addEventListener("click",e=>{e.stopPropagation();move(1)});
 
-vote.addEventListener( "click", async ()=>{
-const res = await fetch( API + "/vote", { method:"POST",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({
-voter_id:voterId,
-photo_id: current + 1
-})
-} );
-const data = await res.json();
-if(data.success){
-    voteState[current]++;
-    show( "Vote recorded." );
-    render();
-}else{
-show( data.error || "Vote failed." );
-}
-} );
+vote.addEventListener("click", async ()=>{
 
-undo.addEventListener( "click", async ()=>{
-const res = await fetch( API + "/undo", {
+
+vote.disabled=true;
+
+
+try{
+
+
+const res = await fetch(
+API + "/vote",
+{
 method:"POST",
-headers:{ "Content-Type":"application/json" },
+headers:{
+"Content-Type":"application/json"
+},
 body:JSON.stringify({
+
 voter_id:voterId,
-photo_id: current + 1
+
+photo_id:current+1
+
 })
-} );
-const data = await res.json();
-if(data.success){
-    if(voteState[current]>0){ voteState[current]--; }
-    show( "Vote removed." );
-    render();
+
 }
-} );
+);
+
+
+
+const data = await res.json();
+
+
+console.log(data);
+
+
+
+if(data.success){
+
+
+voteState[current]++;
+
+show("Vote recorded.");
+
+
+}else{
+
+
+show(data.error || "Vote failed.");
+
+
+}
+
+
+
+render();
+
+
+
+}catch(err){
+
+
+console.error(err);
+
+
+show("Network error.");
+
+
+render();
+
+
+}
+
+
+});
 
 info.addEventListener("click",()=>show("You have 5 votes total. A single photo can receive up to 2. Your choices are saved on this browser. You can undo votes at any time."));
 function show(t){notice.textContent=t;notice.classList.add("show");clearTimeout(window.noticeTimer);window.noticeTimer=setTimeout(()=>notice.classList.remove("show"),2800)}
