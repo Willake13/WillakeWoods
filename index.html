@@ -791,24 +791,29 @@ main {
     .menu {
         top: 14px;
 
-        max-width: 94vw;
+        width: max-content;
+        max-width: calc(100vw - 24px);
 
-        flex-wrap: wrap;
-
+        flex-wrap: nowrap;
         justify-content: center;
+        gap: 1px;
 
-        gap: 2px;
+        padding: 3px;
+
+        overflow: visible;
     }
 
 
     .menu a {
-        font-size: 10px;
+        flex: 0 0 auto;
 
-        padding:
-            0
-            10px;
+        font-size: 9px;
 
-        min-height: 35px;
+        padding: 0 7px;
+
+        min-height: 32px;
+
+        white-space: nowrap;
     }
 
 
@@ -862,43 +867,43 @@ main {
 
     <img
         class="photo active"
-        src="photo01.jpg"
+        src="images-homepage/photo01.jpg"
         alt=""
     >
 
     <img
         class="photo"
-        src="photo02.jpg"
+        src="images-homepage/photo02.jpg"
         alt=""
     >
 
     <img
         class="photo"
-        src="photo03.jpg"
+        src="images-homepage/photo03.jpg"
         alt=""
     >
 
     <img
         class="photo"
-        src="photo04.jpg"
+        src="images-homepage/photo04.jpg"
         alt=""
     >
 
     <img
         class="photo"
-        src="photo05.jpg"
+        src="images-homepage/photo05.jpg"
         alt=""
     >
 
     <img
         class="photo"
-        src="photo06.jpg"
+        src="images-homepage/photo06.jpg"
         alt=""
     >
 
     <img
         class="photo"
-        src="photo07.jpg"
+        src="images-homepage/photo07.jpg"
         alt=""
     >
 
