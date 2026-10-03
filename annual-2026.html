@@ -61,7 +61,20 @@ main{position:fixed;z-index:2;inset:82px 0 48px;display:flex;flex-direction:colu
 .close{position:fixed;right:27px;top:23px;width:43px;height:43px;border-radius:50%;border:1px solid rgba(255,255,255,.23);background:rgba(255,255,255,.09);backdrop-filter:blur(20px);cursor:pointer;font-size:20px}
 @keyframes zoom{from{transform:scale(.84);opacity:.45}to{transform:scale(1);opacity:1}}
 @media(max-width:800px){
-header{height:68px;padding:0 12px}.nav{gap:10px;padding:7px 11px;max-width:calc(100vw - 18px);flex-wrap:nowrap;white-space:nowrap}.nav a{font-size:9px;flex:0 0 auto;white-space:nowrap}
+header{height:68px;padding:0 12px}
+.nav{
+gap:10px;
+padding:8px 14px;
+max-width: calc(100vw - 24px);
+overflow:hidden;
+flex-wrap:nowrap;
+white-space:nowrap;
+}
+.nav a{
+font-size:9px;
+flex-shrink:0;
+white-space:nowrap;
+}
 main{inset:68px 0 48px}.title{font-size:38px;margin-bottom:13px}.kicker{font-size:8px}.viewer{width:100vw;height:57vh}
 .card.side{width:150px;height:150px}.card.current{width:88vw;height:48vh}
 .card[data-side="-3"]{transform:translate(calc(-50% - 300px),-50%) scale(.66)}.card[data-side="-2"]{transform:translate(calc(-50% - 225px),-50%) scale(.78)}.card[data-side="-1"]{transform:translate(calc(-50% - 155px),-50%) scale(.9)}.card[data-side="1"]{transform:translate(calc(-50% + 155px),-50%) scale(.9)}.card[data-side="2"]{transform:translate(calc(-50% + 225px),-50%) scale(.78)}.card[data-side="3"]{transform:translate(calc(-50% + 300px),-50%) scale(.66)}
@@ -107,8 +120,56 @@ main{inset:68px 0 48px}.title{font-size:38px;margin-bottom:13px}.kicker{font-siz
 const N=13,IMAGE_PATH="";
 const stage=document.getElementById("stage"),viewer=document.getElementById("viewer"),prev=document.getElementById("prev"),next=document.getElementById("next"),counter=document.getElementById("counter"),vote=document.getElementById("vote"),undo=document.getElementById("undo"),info=document.getElementById("info"),notice=document.getElementById("notice"),modal=document.getElementById("modal"),modalImg=document.getElementById("modalImg"),bgImg=document.getElementById("bgImg");
 let current=0,downX=0,downY=0,moved=false;
-const VOTE_KEY="willake-annual-picture-votes-v1",MAX_TOTAL_VOTES=5,MAX_PER_PHOTO=2;
-let voteState=loadVotes();
+
+const VOTE_KEY="willake-annual-picture-v1";
+const MAX_TOTAL_VOTES=5;
+const MAX_PER_PHOTO=2;
+const API = "https://willake-vote-api.kuipengxizha.workers.dev";
+const USER_KEY = "willake-voter-id";
+
+function getVoterId(){
+    let id = localStorage.getItem(USER_KEY);
+    if(!id){
+        id = crypto.randomUUID();
+        localStorage.setItem(USER_KEY, id);
+    }
+    return id;
+}
+const voterId = getVoterId();
+
+// 初始全部置0，不再读取本地旧投票
+let voteState={};
+for(let i=0;i<N;i++){
+    voteState[i]=0;
+}
+
+// 从远程Worker/D1拉取该用户的投票
+async function loadRemoteVotes(){
+    try{
+        const res = await fetch(
+            API + "/my-votes",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    voter_id:voterId
+                })
+            }
+        );
+        const data = await res.json();
+        if(data.success){
+            data.votes.forEach(v=>{
+                voteState[v.photo_id-1]=v.count;
+            });
+            render();
+        }
+    }catch(e){
+        console.log("load votes failed",e);
+    }
+}
+
 function imagePath(i){return IMAGE_PATH+"photo-"+String(i+1).padStart(2,"0")+".webp"}
 function loadVotes(){try{const p=JSON.parse(localStorage.getItem(VOTE_KEY)||"{}"),c={};for(let i=0;i<N;i++){const v=Number(p[i]||0);c[i]=Math.max(0,Math.min(MAX_PER_PHOTO,Number.isFinite(v)?Math.floor(v):0))}return c}catch(e){const c={};for(let i=0;i<N;i++)c[i]=0;return c}}
 function saveVotes(){try{localStorage.setItem(VOTE_KEY,JSON.stringify(voteState))}catch(e){}}
@@ -127,8 +188,42 @@ vote.disabled=mine>=MAX_PER_PHOTO||remaining<=0;undo.disabled=mine<=0;info.textC
 }
 function move(s){current=(current+s+N)%N;render()}
 prev.addEventListener("click",e=>{e.stopPropagation();move(-1)});next.addEventListener("click",e=>{e.stopPropagation();move(1)});
-vote.addEventListener("click",()=>{const u=totalVotes(),m=currentVotes();if(u>=MAX_TOTAL_VOTES){render();show("You have used all 5 votes.");return}if(m>=MAX_PER_PHOTO){render();show("This photo already has 2 of your votes.");return}voteState[current]=m+1;saveVotes();render();const a=totalVotes();show(a>=MAX_TOTAL_VOTES?"Your 5 votes are complete.":`Vote recorded · ${MAX_TOTAL_VOTES-a} vote${MAX_TOTAL_VOTES-a===1?"":"s"} remaining.`)});
-undo.addEventListener("click",()=>{const m=currentVotes();if(m<=0){show("There is no vote to undo for this photo.");return}voteState[current]=m-1;saveVotes();render();const r=MAX_TOTAL_VOTES-totalVotes();show(`Vote removed · ${r} vote${r===1?"":"s"} remaining.`)});
+
+vote.addEventListener( "click", async ()=>{
+const res = await fetch( API + "/vote", { method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({
+voter_id:voterId,
+photo_id: current + 1
+})
+} );
+const data = await res.json();
+if(data.success){
+    voteState[current]++;
+    show( "Vote recorded." );
+    render();
+}else{
+show( data.error || "Vote failed." );
+}
+} );
+
+undo.addEventListener( "click", async ()=>{
+const res = await fetch( API + "/undo", {
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({
+voter_id:voterId,
+photo_id: current + 1
+})
+} );
+const data = await res.json();
+if(data.success){
+    if(voteState[current]>0){ voteState[current]--; }
+    show( "Vote removed." );
+    render();
+}
+} );
+
 info.addEventListener("click",()=>show("You have 5 votes total. A single photo can receive up to 2. Your choices are saved on this browser. You can undo votes at any time."));
 function show(t){notice.textContent=t;notice.classList.add("show");clearTimeout(window.noticeTimer);window.noticeTimer=setTimeout(()=>notice.classList.remove("show"),2800)}
 document.getElementById("close").addEventListener("click",()=>modal.classList.remove("open"));
@@ -138,7 +233,9 @@ viewer.addEventListener("pointerdown",e=>{downX=e.clientX;downY=e.clientY;moved=
 viewer.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-downX)>8||Math.abs(e.clientY-downY)>8)moved=true});
 viewer.addEventListener("pointerup",e=>{const dx=e.clientX-downX,dy=e.clientY-downY;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy))move(dx<0?1:-1);setTimeout(()=>moved=false,40)});
 viewer.addEventListener("wheel",e=>{e.preventDefault();const p=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(Math.abs(p)>=8)move(p>0?1:-1)},{passive:false});
+
 render();
+loadRemoteVotes();
 </script>
 </body>
 </html>
