@@ -263,6 +263,61 @@ render();
 
 
 });
+    undo.addEventListener("click", async ()=>{
+
+    undo.disabled=true;
+
+    try{
+
+        const res = await fetch(
+            API + "/undo",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    voter_id:voterId,
+                    photo_id:current+1
+                })
+            }
+        );
+
+
+        const data = await res.json();
+
+        console.log("undo:",data);
+
+
+        if(data.success){
+
+            if(voteState[current]>0){
+                voteState[current]--;
+            }
+
+            show("Vote removed.");
+
+        }else{
+
+            show(data.error || "Undo failed.");
+
+        }
+
+
+        render();
+
+
+    }catch(err){
+
+        console.error(err);
+
+        show("Network error.");
+
+        render();
+
+    }
+
+});
 
 info.addEventListener("click",()=>show("You have 5 votes total. A single photo can receive up to 2. Your choices are saved on this browser. You can undo votes at any time."));
 function show(t){notice.textContent=t;notice.classList.add("show");clearTimeout(window.noticeTimer);window.noticeTimer=setTimeout(()=>notice.classList.remove("show"),2800)}
