@@ -130,7 +130,7 @@ const USER_KEY = "willake-voter-id";
 function getVoterId(){
     let id = localStorage.getItem(USER_KEY);
     if(!id){
-        id = crypto.randomUUID();
+        id = crypto.randomUUID().replaceAll("-","");
         localStorage.setItem(USER_KEY, id);
     }
     return id;
