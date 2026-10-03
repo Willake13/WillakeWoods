@@ -1,0 +1,2212 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+>
+
+<title>Annual Archive — Willake Woods</title>
+
+
+<style>
+
+/* =========================================================
+   FONT
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root{
+    --fg:#f7f6f1;
+    --muted:rgba(247,246,241,.62);
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    background:#070807;
+
+    color:var(--fg);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+}
+
+body{
+    opacity:0;
+
+    animation:
+        pageIn
+        1.8s
+        cubic-bezier(.22,.61,.36,1)
+        .05s
+        forwards;
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.background{
+    position:fixed;
+
+    inset:-10%;
+
+    z-index:0;
+
+    overflow:hidden;
+}
+
+.background img{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    filter:
+        blur(45px)
+        brightness(.38)
+        saturate(.85);
+
+    transform:scale(1.18);
+
+    transition:
+        opacity 1.8s ease,
+        transform 3s ease;
+}
+
+.background:after{
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(0,0,0,.05),
+            rgba(0,0,0,.65)
+        );
+}
+
+
+/* =========================================================
+   TRANSITION IMAGE
+========================================================= */
+
+.transition-layer{
+    position:fixed;
+
+    inset:0;
+
+    z-index:200;
+
+    display:none;
+
+    pointer-events:none;
+}
+
+.transition-layer img{
+    position:absolute;
+
+    object-fit:contain;
+
+    border-radius:2px;
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,.55);
+
+    transition:
+        all .75s
+        cubic-bezier(.22,.61,.36,1);
+}
+
+.transition-layer img.zooming{
+    left:50%!important;
+    top:50%!important;
+
+    width:min(90vw,1200px)!important;
+    height:min(90vh,900px)!important;
+
+    transform:
+        translate(-50%,-50%)
+        scale(1.02);
+}
+
+
+/* =========================================================
+   NAVIGATION
+   — EXACTLY ADAPTED FROM INDEX
+========================================================= */
+
+header{
+    position:fixed;
+
+    top:0;
+    left:0;
+    right:0;
+
+    height:82px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    z-index:20;
+
+    pointer-events:none;
+}
+
+.menu{
+    position:absolute;
+
+    top:22px;
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    display:flex;
+
+    gap:2px;
+
+    padding:4px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(12,12,12,.22);
+
+    backdrop-filter:
+        blur(18px)
+        saturate(135%);
+
+    -webkit-backdrop-filter:
+        blur(18px)
+        saturate(135%);
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.14),
+        0 12px 38px rgba(0,0,0,.18);
+
+    animation:
+        navIn
+        1.4s
+        cubic-bezier(.22,.61,.36,1)
+        .3s
+        both;
+
+    pointer-events:auto;
+}
+
+.menu a{
+    color:
+        rgba(255,255,255,.82);
+
+    text-decoration:none;
+
+    font-size:11px;
+
+    padding:
+        0
+        13px;
+
+    min-height:32px;
+
+    display:flex;
+
+    align-items:center;
+
+    border-radius:
+        999px;
+
+    transition:
+        .35s
+        cubic-bezier(.22,.61,.36,1);
+}
+
+.menu a:hover{
+    color:#fff;
+
+    background:
+        rgba(255,255,255,.12);
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.22),
+        0 6px 22px rgba(255,255,255,.045);
+
+    transform:
+        translateY(-1px)
+        scale(1.045);
+}
+
+.menu a:active{
+    transform:
+        scale(.91);
+
+    background:
+        rgba(255,255,255,.21);
+
+    box-shadow:
+        inset 0 1px 8px
+        rgba(255,255,255,.14);
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+main{
+    position:relative;
+
+    z-index:5;
+
+    height:100%;
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+}
+
+
+/* =========================================================
+   LEFT — ANNUAL ARCHIVE
+========================================================= */
+
+.archive-side{
+
+    width:40%;
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:
+        90px 30px 40px;
+}
+
+.archive-side h1{
+
+    margin:
+        0 0 52px;
+
+    font-family:
+        "Avenir Next",
+        "SF Pro Rounded",
+        Arial,
+        sans-serif;
+
+    font-weight:300;
+
+    font-size:
+        clamp(48px,5vw,72px);
+
+    letter-spacing:-.055em;
+
+    line-height:1;
+
+    text-align:center;
+
+    animation:
+        textReveal
+        1.5s
+        .4s
+        both;
+}
+
+
+/* =========================================================
+   YEARS
+========================================================= */
+
+.years{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:17px;
+
+    align-items:center;
+}
+
+.year{
+
+    border:0;
+
+    background:none;
+
+    color:
+        rgba(255,255,255,.48);
+
+    font-size:18px;
+
+    font-weight:300;
+
+    letter-spacing:.12em;
+
+    cursor:pointer;
+
+    transition:
+        .45s
+        cubic-bezier(.22,.61,.36,1);
+
+    position:relative;
+
+    padding:0;
+}
+
+.year:hover{
+
+    color:#fff;
+
+    transform:
+        translateX(10px)
+        scale(1.06);
+}
+
+.year.active{
+
+    color:#fff;
+}
+
+.year.active:before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-25px;
+
+    top:50%;
+
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:#fff;
+
+    transform:
+        translateY(-50%);
+
+    box-shadow:
+        0 0 20px
+        rgba(255,255,255,.85);
+}
+
+
+/* =========================================================
+   RIGHT — ARCHIVE VIEW
+========================================================= */
+
+.archive-view{
+
+    width:60%;
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:
+        95px 55px 50px;
+
+    animation:
+        contentIn
+        1.4s
+        .35s
+        both;
+}
+
+
+/* =========================================================
+   PHOTO
+========================================================= */
+
+.photo-box{
+
+    width:
+        min(45vw,700px);
+
+    height:
+        min(55vh,650px);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    position:relative;
+}
+
+.photo-box img{
+
+    display:block;
+
+    max-width:100%;
+    max-height:100%;
+
+    width:auto;
+    height:auto;
+
+    object-fit:contain;
+
+    box-shadow:
+        0 35px 100px
+        rgba(0,0,0,.45);
+
+    transition:
+        transform .6s
+        cubic-bezier(.22,.61,.36,1),
+        opacity .55s ease,
+        filter .55s ease;
+}
+
+.photo-box img:hover{
+
+    transform:
+        scale(1.025);
+}
+
+
+/* =========================================================
+   PHOTO CHANGE
+========================================================= */
+
+.photo-box img.changing{
+
+    opacity:0;
+
+    filter:
+        blur(15px);
+
+    transform:
+        scale(1.05);
+}
+/* =========================================================
+   ARCHIVE FLOW TRANSITION
+========================================================= */
+
+
+.photo-box img.year-leave{
+
+    opacity:0;
+
+    filter:blur(12px);
+
+    transform:
+        translateY(-22px)
+        scale(.98);
+
+}
+
+
+.photo-box img.year-enter{
+
+    animation:
+        yearEnter
+        .9s
+        cubic-bezier(.22,.61,.36,1);
+
+}
+
+
+
+@keyframes yearEnter{
+
+    from{
+
+        opacity:0;
+
+        filter:blur(12px);
+
+        transform:
+            translateY(22px)
+            scale(.98);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        filter:blur(0);
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+.photo-box img.appear{
+
+    animation:
+        photoAppear
+        1.2s
+        cubic-bezier(.22,.61,.36,1);
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description{
+
+    margin-top:30px;
+
+    text-align:center;
+
+    min-height:108px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:flex-start;
+}
+
+.description a{
+
+    color:#fff;
+
+    text-decoration:none;
+
+    font-size:
+        clamp(22px,2vw,32px);
+
+    font-family:
+        "Avenir Next",
+        "SF Pro Rounded",
+        Arial,
+        sans-serif;
+
+    font-weight:400;
+
+    letter-spacing:-.03em;
+
+    transition:
+        opacity .3s ease,
+        transform .3s ease;
+}
+
+.description a:hover{
+
+    opacity:.82;
+
+    transform:
+        translateY(-1px);
+}
+
+.description p{
+
+    margin:
+        10px 0 0;
+
+    font-size:13px;
+
+    letter-spacing:.08em;
+
+    color:
+        rgba(255,255,255,.7);
+}
+
+.description .date{
+
+    margin-top:7px;
+
+    font-size:10px;
+
+    color:
+        rgba(255,255,255,.45);
+
+    letter-spacing:.12em;
+}
+
+
+/* =========================================================
+   2026 — NOT SELECTED STATE
+========================================================= */
+
+.future-year{
+
+    display:none;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:100%;
+
+    height:100%;
+}
+
+.future-year.show{
+
+    display:flex;
+}
+
+.future-year .future-kicker{
+
+    font-size:9px;
+
+    letter-spacing:.28em;
+
+    text-transform:uppercase;
+
+    color:
+        rgba(255,255,255,.46);
+
+    margin-bottom:16px;
+}
+
+.future-year .future-number{
+
+    font-family:
+        "Avenir Next",
+        "SF Pro Rounded",
+        Arial,
+        sans-serif;
+
+    font-size:
+        clamp(76px,8vw,120px);
+
+    line-height:.9;
+
+    font-weight:300;
+
+    letter-spacing:-.07em;
+
+    color:#fff;
+
+    margin:0;
+}
+
+.future-year .future-title{
+
+    margin:
+        19px 0 0;
+
+    font-family:
+        "Avenir Next",
+        "SF Pro Rounded",
+        Arial,
+        sans-serif;
+
+    font-size:
+        clamp(23px,2.2vw,34px);
+
+    font-weight:400;
+
+    letter-spacing:-.035em;
+}
+
+.future-year .future-status{
+
+    margin:
+        13px 0 0;
+
+    font-size:12px;
+
+    color:
+        rgba(255,255,255,.65);
+
+    letter-spacing:.08em;
+
+    text-align:center;
+}
+
+.future-year .future-note{
+
+    margin:
+        7px 0 0;
+
+    font-size:10px;
+
+    color:
+        rgba(255,255,255,.42);
+
+    letter-spacing:.06em;
+
+    text-align:center;
+}
+
+
+/* =========================================================
+   2026 BUTTON
+========================================================= */
+
+.future-entry{
+
+    position:relative;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:9px;
+
+    margin-top:28px;
+
+    min-width:190px;
+
+    height:38px;
+
+    padding:
+        0 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    border-radius:999px;
+
+    color:
+        rgba(255,255,255,.84);
+
+    text-decoration:none;
+
+    background:
+        rgba(255,255,255,.045);
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255,255,255,.13),
+        0 10px 28px
+        rgba(0,0,0,.14);
+
+    backdrop-filter:
+        blur(18px)
+        saturate(140%);
+
+    -webkit-backdrop-filter:
+        blur(18px)
+        saturate(140%);
+
+    overflow:hidden;
+
+    transition:
+        transform .45s
+        cubic-bezier(.22,.61,.36,1),
+        background .4s ease,
+        border-color .4s ease,
+        box-shadow .4s ease;
+}
+
+.future-entry:before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-30%;
+    top:-80%;
+
+    width:55%;
+    height:260%;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.09);
+
+    filter:blur(13px);
+
+    transform:
+        translateX(-15%);
+
+    transition:
+        transform .7s
+        cubic-bezier(.22,.61,.36,1),
+        opacity .4s ease;
+
+    opacity:.35;
+}
+
+.future-entry span{
+
+    position:relative;
+
+    z-index:1;
+}
+
+.future-dot{
+
+    width:4px;
+    height:4px;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.72);
+
+    box-shadow:
+        0 0 10px
+        rgba(255,255,255,.22);
+
+    transition:
+        transform .45s
+        cubic-bezier(.22,.61,.36,1);
+}
+
+.future-label{
+
+    font-size:11px;
+
+    font-weight:500;
+
+    letter-spacing:.08em;
+}
+
+.future-arrow{
+
+    font-size:13px;
+
+    opacity:.58;
+
+    transition:
+        transform .45s
+        cubic-bezier(.22,.61,.36,1),
+        opacity .35s ease;
+}
+
+.future-entry:hover{
+
+    transform:
+        translateY(-2px)
+        scale(1.045);
+
+    color:#fff;
+
+    background:
+        rgba(255,255,255,.095);
+
+    border-color:
+        rgba(255,255,255,.23);
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255,255,255,.20),
+        0 14px 38px
+        rgba(0,0,0,.20),
+        0 0 24px
+        rgba(255,255,255,.045);
+}
+
+.future-entry:hover:before{
+
+    transform:
+        translateX(230%);
+
+    opacity:.72;
+}
+
+.future-entry:hover .future-dot{
+
+    transform:
+        scale(1.5);
+}
+
+.future-entry:hover .future-arrow{
+
+    transform:
+        translateX(4px);
+
+    opacity:.95;
+}
+
+.future-entry:active{
+
+    transform:
+        translateY(0)
+        scale(.94);
+
+    background:
+        rgba(255,255,255,.15);
+}
+
+
+/* =========================================================
+   LIGHTBOX
+========================================================= */
+
+.lightbox{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:300;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+        rgba(0,0,0,.58);
+
+    backdrop-filter:
+        blur(30px);
+
+    -webkit-backdrop-filter:
+        blur(30px);
+}
+
+.lightbox.open{
+
+    display:flex;
+}
+
+.lightbox img{
+
+    max-width:90vw;
+
+    max-height:90vh;
+
+    object-fit:contain;
+
+    animation:
+        lightOpen
+        .6s
+        cubic-bezier(.22,.61,.36,1);
+}
+
+#closeLightbox{
+
+    position:absolute;
+
+    top:25px;
+    right:30px;
+
+    width:45px;
+    height:45px;
+
+    border-radius:50%;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    background:
+        rgba(255,255,255,.1);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    color:#fff;
+
+    font-size:25px;
+
+    cursor:pointer;
+
+    transition:
+        transform .25s,
+        background .25s;
+}
+
+#closeLightbox:hover{
+
+    transform:
+        scale(1.06);
+
+    background:
+        rgba(255,255,255,.18);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes pageIn{
+
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
+}
+
+@keyframes navIn{
+
+    from{
+        opacity:0;
+
+        transform:
+            translate(-50%,-18px);
+    }
+
+    to{
+        opacity:1;
+
+        transform:
+            translate(-50%,0);
+    }
+}
+
+@keyframes textReveal{
+
+    from{
+
+        opacity:0;
+
+        filter:blur(15px);
+
+        transform:
+            translateY(20px);
+    }
+
+    to{
+
+        opacity:1;
+
+        filter:blur(0);
+
+        transform:none;
+    }
+}
+
+@keyframes contentIn{
+
+    from{
+
+        opacity:0;
+
+        filter:blur(8px);
+
+        transform:
+            translateY(15px);
+    }
+
+    to{
+
+        opacity:1;
+
+        filter:blur(0);
+
+        transform:none;
+    }
+}
+
+@keyframes photoAppear{
+
+    from{
+
+        opacity:0;
+
+        filter:blur(18px);
+
+        transform:
+            scale(.96);
+    }
+
+    to{
+
+        opacity:1;
+
+        filter:blur(0);
+
+        transform:
+            scale(1);
+    }
+}
+
+@keyframes lightOpen{
+
+    from{
+
+        opacity:.3;
+
+        transform:
+            scale(.82);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+    html,
+    body{
+        overflow:auto;
+        min-height:100%;
+    }
+
+    header{
+        height:70px;
+    }
+
+    .menu{
+
+        top:14px;
+
+        max-width:94vw;
+
+        flex-wrap:wrap;
+
+        justify-content:center;
+
+        gap:2px;
+    }
+
+    .menu a{
+
+        font-size:10px;
+
+        padding:
+            0 10px;
+
+        min-height:35px;
+    }
+
+    main{
+
+        min-height:100vh;
+
+        height:auto;
+
+        flex-direction:column;
+
+        padding-top:70px;
+    }
+
+    .archive-side{
+
+        width:100%;
+
+        height:auto;
+
+        min-height:38vh;
+
+        padding:
+            45px 20px 20px;
+    }
+
+    .archive-side h1{
+
+        margin-bottom:32px;
+
+        font-size:
+            clamp(42px,9vw,64px);
+    }
+
+    .years{
+
+        flex-direction:row;
+
+        flex-wrap:wrap;
+
+        justify-content:center;
+
+        gap:10px 22px;
+
+        max-width:560px;
+    }
+
+    .year{
+
+        font-size:14px;
+    }
+
+    .year.active:before{
+
+        display:none;
+    }
+
+    .archive-view{
+
+        width:100%;
+
+        min-height:62vh;
+
+        height:auto;
+
+        padding:
+            20px 20px 70px;
+    }
+
+    .photo-box{
+
+        width:
+            min(88vw,700px);
+
+        height:
+            min(50vh,520px);
+    }
+
+    .description{
+
+        margin-top:22px;
+    }
+
+    .future-year{
+
+        min-height:48vh;
+    }
+
+    .future-year .future-number{
+
+        font-size:
+            clamp(70px,18vw,110px);
+    }
+}
+
+
+@media(max-width:600px){
+
+    .menu{
+
+        width:calc(100vw - 24px);
+
+    }
+
+    .menu a{
+
+        font-size:9px;
+
+        padding:
+            0 8px;
+
+        min-height:33px;
+    }
+
+    .archive-side{
+
+        min-height:43vh;
+    }
+
+    .archive-side h1{
+
+        font-size:
+            clamp(38px,10vw,52px);
+    }
+
+    .years{
+
+        gap:9px 17px;
+    }
+
+    .year{
+
+        font-size:13px;
+    }
+
+    .archive-view{
+
+        min-height:57vh;
+    }
+
+    .photo-box{
+
+        width:92vw;
+
+        height:42vh;
+    }
+
+    .description a{
+
+        font-size:22px;
+    }
+
+    .description p{
+
+        font-size:11px;
+    }
+
+    .future-year .future-title{
+
+        font-size:25px;
+    }
+
+    .future-year .future-status{
+
+        max-width:280px;
+
+        line-height:1.7;
+    }
+
+    .future-entry{
+
+        min-width:185px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+    *{
+
+        animation-duration:
+            .01ms !important;
+
+        transition-duration:
+            .01ms !important;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+<div class="background">
+
+    <img
+        id="backgroundImage"
+        src="images/annualarchive/cover-2020.jpg"
+        alt=""
+    >
+
+</div>
+
+
+<!-- =====================================================
+     TRANSITION IMAGE
+===================================================== -->
+
+<div class="transition-layer">
+
+    <img
+        id="transitionImage"
+        alt=""
+    >
+
+</div>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
+
+<header>
+
+    <nav
+        class="menu"
+        aria-label="Main navigation"
+    >
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="twelve-months.html">
+            12 Months
+        </a>
+
+        <a href="solar-terms.html">
+            24 Solar Terms
+        </a>
+
+        <a href="others.html">
+            Others
+        </a>
+
+    </nav>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main>
+
+
+<!-- =====================================================
+     LEFT
+===================================================== -->
+
+<section class="archive-side">
+
+    <h1>
+        Annual Archive
+    </h1>
+
+
+    <div class="years">
+
+        <button
+            class="year active"
+            data-year="2020"
+        >
+            2020
+        </button>
+
+        <button
+            class="year"
+            data-year="2021"
+        >
+            2021
+        </button>
+
+        <button
+            class="year"
+            data-year="2022"
+        >
+            2022
+        </button>
+
+        <button
+            class="year"
+            data-year="2023"
+        >
+            2023
+        </button>
+
+        <button
+            class="year"
+            data-year="2024"
+        >
+            2024
+        </button>
+
+        <button
+            class="year"
+            data-year="2025"
+        >
+            2025
+        </button>
+
+        <button
+            class="year"
+            data-year="2026"
+        >
+            2026
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     RIGHT
+===================================================== -->
+
+<section class="archive-view">
+
+
+    <!-- NORMAL ARCHIVE PHOTO -->
+
+    <div
+        id="normalArchive"
+        style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;"
+    >
+
+        <div class="photo-box">
+
+            <img
+                id="coverPhoto"
+                src="images/annualarchive/cover-2020.jpg"
+                alt="Annual Picture"
+            >
+
+        </div>
+
+
+        <div class="description">
+
+            <a
+                id="photoTitle"
+                href="annual-2020.html"
+            >
+                Haze Waves Of Nature
+            </a>
+
+            <p id="photoName">
+                《绿色烟丝》
+            </p>
+
+            <p
+                id="photoDate"
+                class="date"
+            >
+                2019.9.28—2020.9.26
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         2026 FUTURE STATE
+    ================================================== -->
+
+    <div
+        class="future-year"
+        id="futureYear"
+    >
+
+        <div class="future-kicker">
+            Current Annual Picture
+        </div>
+
+        <h2 class="future-number">
+            2026
+        </h2>
+
+        <div class="future-title">
+            Annual Picture
+        </div>
+
+        <div class="future-status">
+            Not selected yet
+        </div>
+
+        <div class="future-note">
+            The Annual Picture is currently being voted on.
+        </div>
+
+        <a
+            class="future-entry"
+            href="annual-2026.html"
+        >
+
+            <span class="future-dot"></span>
+
+            <span class="future-label">
+                Enter 2026 Voting
+            </span>
+
+            <span class="future-arrow">
+                →
+            </span>
+
+        </a>
+
+    </div>
+
+
+</section>
+
+</main>
+
+
+<!-- =====================================================
+     LIGHTBOX
+===================================================== -->
+
+<div
+    class="lightbox"
+    id="lightbox"
+>
+
+    <button
+        id="closeLightbox"
+        aria-label="Close"
+    >
+        ×
+    </button>
+
+    <img
+        id="largePhoto"
+        alt="Enlarged Annual Picture"
+    >
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+
+const years =
+    document.querySelectorAll(".year");
+
+
+const coverPhoto =
+    document.getElementById("coverPhoto");
+
+
+const backgroundImage =
+    document.getElementById("backgroundImage");
+
+
+const photoTitle =
+    document.getElementById("photoTitle");
+
+
+const photoName =
+    document.getElementById("photoName");
+
+
+const photoDate =
+    document.getElementById("photoDate");
+
+
+const lightbox =
+    document.getElementById("lightbox");
+
+
+const largePhoto =
+    document.getElementById("largePhoto");
+
+
+const closeLightbox =
+    document.getElementById("closeLightbox");
+
+
+const normalArchive =
+    document.getElementById("normalArchive");
+
+
+const futureYear =
+    document.getElementById("futureYear");
+
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+
+const archive = {
+
+
+2020:{
+image:"images/annualarchive/cover-2020.jpg",
+title:"Haze Waves Of Nature",
+name:"《绿色烟丝》",
+date:"2019.9.28—2020.9.26",
+link:"annual-2020.html"
+},
+
+
+2021:{
+image:"images/annualarchive/cover-2021.jpg",
+title:"Puff Of Shine",
+name:"《若有光》",
+date:"2020.9.28—2021.9.26",
+link:"annual-2021.html"
+},
+
+
+2022:{
+image:"images/annualarchive/cover-2022.jpg",
+title:"Glimmer Of Ocean",
+name:"《光海之间》",
+date:"2021.9.29—2022.9.25",
+link:"annual-2022.html"
+},
+
+
+2023:{
+image:"images/annualarchive/cover-2023.jpg",
+title:"Seek After Lost",
+name:"《望遗》",
+date:"2022.10.04—2023.9.23",
+link:"annual-2023.html"
+},
+
+
+2024:{
+image:"images/annualarchive/cover-2024.jpg",
+title:"Twilight Shadeglow",
+name:"《暮日残梦》",
+date:"2023.10.11—2024.9.09",
+link:"annual-2024.html"
+},
+
+
+2025:{
+image:"images/annualarchive/cover-2025.jpg",
+title:"Weaving Silhouette",
+name:"《织梦》",
+date:"2024.09.09—2025.09.17",
+link:"annual-2025.html"
+}
+
+
+};
+
+
+
+let currentYear = 2020;
+
+
+
+/* =========================================================
+   GO TO YEAR
+========================================================= */
+
+
+function goToYear(year){
+
+
+    if(year===2026){
+
+        show2026();
+
+        return;
+
+    }
+
+
+    const data =
+        archive[year];
+
+
+    if(!data) return;
+
+
+
+    currentYear =
+        Number(year);
+
+
+
+    years.forEach(y=>{
+
+        y.classList.remove("active");
+
+        if(Number(y.dataset.year)===year){
+
+            y.classList.add("active");
+
+        }
+
+    });
+
+
+
+    normalArchive.style.display="flex";
+
+    futureYear.classList.remove("show");
+
+
+
+    coverPhoto.classList.remove(
+        "year-enter"
+    );
+
+
+    coverPhoto.classList.add(
+        "year-leave"
+    );
+
+
+
+    setTimeout(()=>{
+
+
+        coverPhoto.src =
+            data.image;
+
+
+        backgroundImage.src =
+            data.image;
+
+
+        photoTitle.textContent =
+            data.title;
+
+
+        photoName.textContent =
+            data.name;
+
+
+        photoDate.textContent =
+            data.date;
+
+
+        photoTitle.href =
+            data.link;
+
+
+
+        coverPhoto.classList.remove(
+            "year-leave"
+        );
+
+
+        coverPhoto.classList.add(
+            "year-enter"
+        );
+
+
+        setTimeout(()=>{
+
+            coverPhoto.classList.remove(
+                "year-enter"
+            );
+
+        },900);
+
+
+
+    },350);
+
+
+
+}
+
+
+
+
+/* =========================================================
+   2026
+========================================================= */
+
+
+function show2026(){
+
+
+    currentYear=2026;
+
+
+    years.forEach(y=>{
+
+        y.classList.remove("active");
+
+        if(y.dataset.year==="2026"){
+
+            y.classList.add("active");
+
+        }
+
+    });
+
+
+
+    normalArchive.style.display="none";
+
+
+    futureYear.classList.add("show");
+
+
+    backgroundImage.src =
+    "images/annualarchive/cover-2025.jpg";
+
+
+}
+
+
+
+/* =========================================================
+   CLICK YEAR
+========================================================= */
+
+
+years.forEach(button=>{
+
+
+button.addEventListener(
+"click",
+()=>{
+
+
+goToYear(
+Number(button.dataset.year)
+);
+
+
+});
+
+
+});
+
+
+
+/* =========================================================
+   MOUSE WHEEL YEAR SWITCH
+========================================================= */
+
+
+let wheelLock=false;
+
+
+window.addEventListener(
+"wheel",
+(e)=>{
+
+
+if(wheelLock) return;
+
+
+
+if(Math.abs(e.deltaY)<20)
+return;
+
+
+
+let next =
+currentYear;
+
+
+
+if(e.deltaY>0){
+
+next++;
+
+}else{
+
+next--;
+
+}
+
+
+
+if(next<2020)
+next=2020;
+
+
+if(next>2026)
+next=2026;
+
+
+
+if(next!==currentYear){
+
+
+wheelLock=true;
+
+
+goToYear(next);
+
+
+
+setTimeout(()=>{
+
+wheelLock=false;
+
+},900);
+
+
+}
+
+
+
+},
+{
+passive:true
+}
+
+);
+
+
+
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+
+document.addEventListener(
+"keydown",
+(e)=>{
+
+
+if(e.key==="ArrowDown"){
+
+goToYear(
+Math.min(
+currentYear+1,
+2026
+)
+);
+
+}
+
+
+
+if(e.key==="ArrowUp"){
+
+
+goToYear(
+Math.max(
+currentYear-1,
+2020
+)
+);
+
+
+}
+
+
+
+});
+
+
+
+
+/* =========================================================
+   PHOTO LIGHTBOX
+========================================================= */
+
+
+coverPhoto.addEventListener(
+"click",
+()=>{
+
+
+if(currentYear===2026)
+return;
+
+
+
+lightbox.classList.add(
+"open"
+);
+
+
+largePhoto.src =
+coverPhoto.src;
+
+
+
+});
+
+
+
+closeLightbox.addEventListener(
+"click",
+()=>{
+
+lightbox.classList.remove(
+"open"
+);
+
+});
+
+
+
+lightbox.addEventListener(
+"click",
+(e)=>{
+
+if(e.target===lightbox){
+
+lightbox.classList.remove(
+"open"
+);
+
+}
+
+});
+
+
+
+document.addEventListener(
+"keydown",
+(e)=>{
+
+if(e.key==="Escape"){
+
+lightbox.classList.remove(
+"open"
+);
+
+}
+
+});
+
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+
+goToYear(2020);
+</script>
+
+
+</body>
+
+</html>
