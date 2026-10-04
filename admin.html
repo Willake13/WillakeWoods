@@ -6,27 +6,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>
-Willake Vote Admin
-</title>
-
+<title>Willake Vote Admin</title>
 
 <style>
-
 
 *{
 box-sizing:border-box;
 }
 
-
 html,body{
 
 margin:0;
 width:100%;
-height:100%;
+min-height:100%;
 
 background:#090b09;
-
 color:#f7f6f1;
 
 font-family:
@@ -39,17 +33,15 @@ Arial;
 }
 
 
-
 body{
 
 display:flex;
 justify-content:center;
 align-items:center;
 
-overflow:auto;
+padding:30px;
 
 }
-
 
 
 .bg{
@@ -70,11 +62,9 @@ z-index:0;
 }
 
 
-
 .bg:after{
 
 content:"";
-
 position:absolute;
 inset:0;
 
@@ -82,7 +72,6 @@ background:
 rgba(0,0,0,.45);
 
 }
-
 
 
 
@@ -97,37 +86,17 @@ padding:42px;
 
 border-radius:32px;
 
-
 background:
-
 rgba(255,255,255,.075);
 
-
 border:
-
 1px solid rgba(255,255,255,.16);
 
-
 backdrop-filter:
-
 blur(35px);
 
-
 box-shadow:
-
 0 40px 100px rgba(0,0,0,.5);
-
-}
-
-
-
-.header{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
 
 }
 
@@ -136,7 +105,6 @@ align-items:center;
 h1{
 
 font-size:42px;
-
 font-weight:300;
 
 letter-spacing:-.06em;
@@ -163,12 +131,13 @@ text-transform:uppercase;
 
 
 
-
-button{
+input{
 
 margin-top:25px;
 
-padding:12px 22px;
+width:100%;
+
+padding:14px 18px;
 
 border-radius:999px;
 
@@ -176,30 +145,68 @@ border:
 
 1px solid rgba(255,255,255,.25);
 
+background:
+
+rgba(255,255,255,.08);
+
+color:white;
+
+outline:none;
+
+}
+
+
+
+button{
+
+margin-top:18px;
+
+padding:12px 25px;
+
+border-radius:999px;
+
+border:
+
+1px solid rgba(255,255,255,.25);
 
 background:
 
 rgba(255,255,255,.1);
 
-
 color:white;
 
 cursor:pointer;
 
-
-transition:.25s;
-
 }
+
 
 
 button:hover{
 
 background:
-
 rgba(255,255,255,.2);
 
 }
 
+
+
+#login{
+
+text-align:center;
+
+}
+
+
+
+#error{
+
+margin-top:15px;
+
+font-size:12px;
+
+opacity:.6;
+
+}
 
 
 
@@ -219,9 +226,7 @@ align-items:center;
 
 gap:18px;
 
-
 padding:16px 0;
-
 
 border-bottom:
 
@@ -229,6 +234,15 @@ border-bottom:
 
 }
 
+
+
+.rank{
+
+width:35px;
+
+font-size:20px;
+
+}
 
 
 
@@ -241,8 +255,6 @@ height:70px;
 border-radius:14px;
 
 overflow:hidden;
-
-flex-shrink:0;
 
 }
 
@@ -259,22 +271,11 @@ object-fit:cover;
 
 
 
-.rank{
-
-width:35px;
-
-font-size:20px;
-
-}
-
-
-
 .name{
 
 flex:1;
 
 }
-
 
 
 .title{
@@ -295,26 +296,17 @@ margin-top:4px;
 }
 
 
-
-.vote{
-
-font-size:18px;
-
-}
-
-
-
 .bar{
 
 margin-top:8px;
 
 height:4px;
 
-border-radius:10px;
-
 background:
 
 rgba(255,255,255,.12);
+
+border-radius:10px;
 
 overflow:hidden;
 
@@ -326,11 +318,17 @@ overflow:hidden;
 height:100%;
 
 background:
-
 rgba(255,255,255,.75);
 
 }
 
+
+
+.vote{
+
+font-size:20px;
+
+}
 
 
 
@@ -338,13 +336,18 @@ rgba(255,255,255,.75);
 
 margin-top:25px;
 
+text-align:center;
+
 font-size:11px;
 
 opacity:.45;
 
-letter-spacing:.15em;
+}
 
-text-align:center;
+
+.hidden{
+
+display:none;
 
 }
 
@@ -364,27 +367,57 @@ text-align:center;
 <div class="panel">
 
 
-<div class="header">
 
-<div>
+<div id="login">
+
 
 <h1>
-Vote Ranking
+Admin
 </h1>
+
 
 <div class="sub">
 Willake Annual Picture 2026
 </div>
 
+
+<input
+id="password"
+type="password"
+placeholder="Enter password">
+
+
+<button onclick="login()">
+Login
+</button>
+
+
+<div id="error"></div>
+
+
 </div>
+
+
+
+
+
+<div id="dashboard" class="hidden">
+
+
+<h1>
+Vote Ranking
+</h1>
+
+
+<div class="sub">
+Willake Annual Picture 2026
+</div>
+
 
 
 <button onclick="loadVotes()">
 Refresh
 </button>
-
-
-</div>
 
 
 
@@ -396,13 +429,14 @@ Loading...
 
 
 
-<div class="footer" id="time">
-
-</div>
+<div class="footer" id="time"></div>
 
 
 </div>
 
+
+
+</div>
 
 
 
@@ -411,53 +445,94 @@ Loading...
 <script>
 
 
-
-const API=
+const API =
 "https://vote.136875.xyz";
 
 
-const KEY=
-"200212";
+const TOTAL = 13;
 
-
-
-const TOTAL=
-13;
-
-
-
-// 这里以后替换成你的真实照片标题
 
 const titles=[
 
 "Haze Of Light",
-
 "Annual Picture 2026",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled",
-
 "Untitled"
 
 ];
 
+
+
+let KEY=null;
+
+
+
+function login(){
+
+
+const value =
+document.getElementById("password").value;
+
+
+if(!value){
+
+return;
+
+}
+
+
+KEY=value;
+
+
+sessionStorage.setItem(
+"admin-key",
+value
+);
+
+
+
+checkLogin();
+
+
+}
+
+
+
+
+function checkLogin(){
+
+
+KEY=sessionStorage.getItem(
+"admin-key"
+);
+
+
+if(KEY){
+
+
+document.getElementById("login")
+.classList.add("hidden");
+
+
+document.getElementById("dashboard")
+.classList.remove("hidden");
+
+
+loadVotes();
+
+
+}
+
+}
 
 
 
@@ -467,40 +542,42 @@ async function loadVotes(){
 try{
 
 
-const res=
+const res =
 await fetch(
 API+
-"/admin-stats?key="+KEY
+"/admin-stats?key="+
+encodeURIComponent(KEY)
 );
 
 
 
-const data=
+const data =
 await res.json();
 
 
 
 if(!data.success){
 
-throw Error();
+throw Error(
+"Unauthorized"
+);
 
 }
 
 
 
-let ranking=
-data.ranking;
+let ranking =
+data.ranking || [];
 
 
-
-// 没有人投票的照片补齐
 
 for(let i=1;i<=TOTAL;i++){
 
 
-if(!ranking.find(
-x=>x.photo_id===i
+if(!ranking.some(
+x=>Number(x.photo_id)===i
 )){
+
 
 ranking.push({
 
@@ -518,14 +595,26 @@ votes:0
 
 
 
-ranking.sort(
-(a,b)=>
-b.votes-a.votes
-);
+ranking.sort((a,b)=>{
+
+
+if(
+Number(b.votes)!==
+Number(a.votes)
+)
+
+return b.votes-a.votes;
+
+
+return a.photo_id-b.photo_id;
+
+
+});
 
 
 
-const max=
+
+const max =
 Math.max(
 1,
 ranking[0].votes
@@ -537,8 +626,7 @@ let html="";
 
 
 
-ranking.forEach(
-(item,index)=>{
+ranking.forEach((item,index)=>{
 
 
 let medal="";
@@ -552,7 +640,6 @@ medal="🥈";
 
 else if(index===2)
 medal="🥉";
-
 
 
 
@@ -579,6 +666,7 @@ ${medal || index+1}
 
 <div class="name">
 
+
 <div class="title">
 
 Photo-${String(item.photo_id).padStart(2,"0")}
@@ -593,20 +681,19 @@ ${titles[item.photo_id-1]}
 </div>
 
 
-
 <div class="bar">
 
 <div class="fill"
-
-style="width:${item.votes/max*100}%">
-
-</div>
-
-</div>
-
+style="
+width:${item.votes/max*100}%
+">
 
 </div>
 
+</div>
+
+
+</div>
 
 
 <div class="vote">
@@ -616,22 +703,16 @@ ${item.votes}
 </div>
 
 
-
 </div>
 
 
 `;
 
-
-
 });
-
-
 
 
 document.getElementById("list").innerHTML=
 html;
-
 
 
 document.getElementById("time").innerHTML=
@@ -641,33 +722,34 @@ new Date()
 .toLocaleTimeString();
 
 
-
 }
 
 catch(e){
 
 
 document.getElementById("list").innerHTML=
-
 "Network Error";
 
 
 }
 
-
-
 }
 
 
 
 
+checkLogin();
+
+
+setInterval(()=>{
+
+if(KEY){
+
 loadVotes();
 
+}
 
-setInterval(
-loadVotes,
-5000
-);
+},5000);
 
 
 
